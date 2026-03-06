@@ -66,6 +66,7 @@ export function useRaffle() {
   const [error, setError]               = useState<string | null>(null);
   const [txPending, setTxPending]       = useState(false);
   const [currentBlock, setCurrentBlock] = useState<bigint>(0n);
+  const [myTickets, setMyTickets]       = useState(0);
 
   // ── Connect wallet ────────────────────────────────────────────────────────
   const connectWallet = useCallback(async () => {
@@ -176,12 +177,38 @@ export function useRaffle() {
     }
   }
 
+  // ── My-tickets tracking (localStorage, invalidated on new round) ─────────
+  const lsKey = account ? `vr-tickets-${CONTRACT_ADDR}-${account}` : null;
+
+  useEffect(() => {
+    if (!lsKey || !round) { setMyTickets(0); return; }
+    try {
+      const raw = localStorage.getItem(lsKey);
+      if (!raw) { setMyTickets(0); return; }
+      const { endBlock, count } = JSON.parse(raw) as { endBlock: string; count: number };
+      if (endBlock !== round.endBlock.toString()) {
+        localStorage.removeItem(lsKey);
+        setMyTickets(0);
+      } else {
+        setMyTickets(count);
+      }
+    } catch { setMyTickets(0); }
+  }, [lsKey, round?.endBlock.toString()]);
+
   // ── Public actions ────────────────────────────────────────────────────────
   const createRound = (ticketPrice: bigint, durationBlocks: bigint) =>
     opnetSend('createRound', [ticketPrice, durationBlocks]);
 
-  const buyTickets = (count: number, ticketPrice: bigint) =>
-    opnetSend('buyTickets', [count], ticketPrice * BigInt(count));
+  const buyTickets = async (count: number, ticketPrice: bigint) => {
+    const result = await opnetSend('buyTickets', [count], ticketPrice * BigInt(count));
+    // Update local ticket count on success
+    if (lsKey && round) {
+      const newCount = myTickets + count;
+      localStorage.setItem(lsKey, JSON.stringify({ endBlock: round.endBlock.toString(), count: newCount }));
+      setMyTickets(newCount);
+    }
+    return result;
+  };
 
   const drawWinner  = () => opnetSend('drawWinner', []);
   const claimPrize  = () => opnetSend('claimPrize', []);
@@ -201,6 +228,7 @@ export function useRaffle() {
     error,
     txPending,
     currentBlock,
+    myTickets,
     refresh,
     connectWallet,
     createRound,

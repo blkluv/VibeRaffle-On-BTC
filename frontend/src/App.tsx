@@ -10,7 +10,7 @@ import Footer from './components/Footer';
 
 export default function App() {
   const {
-    round, account, loading, error, txPending, currentBlock,
+    round, account, loading, error, txPending, currentBlock, myTickets,
     refresh, connectWallet, createRound, buyTickets, drawWinner, claimPrize, withdrawFee,
   } = useRaffle();
 
@@ -61,6 +61,7 @@ export default function App() {
               round={round}
               account={account}
               busy={busy}
+              myTickets={myTickets}
               onBuy={buyTickets}
               onConnect={connectWallet}
             />

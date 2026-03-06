@@ -6,17 +6,26 @@ interface Props {
   round: RoundInfo;
   account: string | null;
   busy: boolean;
+  myTickets: number;
   onBuy: (count: number, price: bigint) => Promise<unknown>;
   onConnect: () => void;
 }
 
-export default function BuyTickets({ round, account, busy, onBuy, onConnect }: Props) {
+export default function BuyTickets({ round, account, busy, myTickets, onBuy, onConnect }: Props) {
   const [count, setCount] = useState(1);
   const [buying, setBuying] = useState(false);
 
   const price = round.ticketPrice;
   const total = price * BigInt(count);
   const totalSats = Number(total);
+
+  const totalTickets = Number(round.totalTickets);
+  const afterBuy = myTickets + count;
+  const afterTotal = totalTickets + count;
+  const winChance = afterTotal > 0 ? (afterBuy / afterTotal) * 100 : 0;
+  const currentChance = totalTickets > 0 && myTickets > 0
+    ? (myTickets / totalTickets) * 100
+    : 0;
 
   const handleBuy = async () => {
     if (!account) { onConnect(); return; }
@@ -45,6 +54,26 @@ export default function BuyTickets({ round, account, busy, onBuy, onConnect }: P
           Buy Tickets
         </h3>
 
+        {/* My tickets + current chance */}
+        {account && myTickets > 0 && (
+          <div className="glass p-3 mb-5 rounded-xl border border-neon-violet/20">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-400">Your tickets</span>
+              <span className="font-bold text-neon-violet">{myTickets} / {totalTickets}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm mt-1">
+              <span className="text-gray-400">Win chance</span>
+              <span className="font-bold text-neon-green">{currentChance.toFixed(1)}%</span>
+            </div>
+            <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-neon-violet to-neon-green transition-all duration-500"
+                style={{ width: `${Math.min(currentChance, 100)}%` }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Counter */}
         <div className="flex items-center justify-center gap-4 mb-6">
           <button
@@ -66,7 +95,7 @@ export default function BuyTickets({ round, account, busy, onBuy, onConnect }: P
         </div>
 
         {/* Price breakdown */}
-        <div className="glass p-4 mb-6 text-center">
+        <div className="glass p-4 mb-4 text-center">
           <p className="text-sm text-gray-400">
             {count} x {Number(price).toLocaleString()} sats
           </p>
@@ -77,6 +106,15 @@ export default function BuyTickets({ round, account, busy, onBuy, onConnect }: P
             ~{(totalSats / 100_000_000).toFixed(6)} BTC
           </p>
         </div>
+
+        {/* After-buy chance preview */}
+        {account && afterTotal > 0 && (
+          <p className="text-xs text-center text-gray-500 mb-4">
+            After buying:{' '}
+            <span className="text-neon-violet font-semibold">{afterBuy}</span> tickets →{' '}
+            <span className="text-neon-green font-semibold">{winChance.toFixed(1)}%</span> win chance
+          </p>
+        )}
 
         {/* Buy button */}
         <button
