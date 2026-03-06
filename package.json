@@ -1,0 +1,30 @@
+{
+  "name": "viberaffle",
+  "version": "1.0.0",
+  "description": "VibeRaffle — provably fair on-chain BTC lottery on OP_NET",
+  "license": "MIT",
+  "scripts": {
+    "deploy": "node test/deploy.mjs",
+    "build": "asc src/index.ts --target release --measure --uncheckedBehavior never",
+    "build:debug": "asc src/index.ts --target debug --measure",
+    "clean": "rimraf build",
+    "check": "node test/0-check-state.mjs",
+    "round:create": "node test/1-create-round.mjs",
+    "round:buy": "node test/2-buy-tickets.mjs",
+    "round:draw": "node test/3-draw-winner.mjs",
+    "round:claim": "node test/4-claim-prize.mjs",
+    "round:fee": "node test/5-withdraw-fee.mjs",
+    "bot": "node test/payout-bot.mjs",
+    "frontend:dev": "cd frontend && npm install && npm run dev",
+    "frontend:build": "cd frontend && npm install && npm run build"
+  },
+  "dependencies": {
+    "@btc-vision/as-bignum": "latest",
+    "@btc-vision/btc-runtime": "^1.11.0-rc.10",
+    "@btc-vision/opnet-transform": "latest"
+  },
+  "devDependencies": {
+    "assemblyscript": "latest",
+    "rimraf": "^5.0.0"
+  }
+}

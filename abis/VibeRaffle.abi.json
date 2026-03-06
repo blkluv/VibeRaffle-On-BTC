@@ -1,0 +1,208 @@
+{
+    "functions": [
+        {
+            "name": "createRound",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": true,
+            "inputs": [
+                {
+                    "name": "ticketPrice",
+                    "type": "UINT256"
+                },
+                {
+                    "name": "durationBlocks",
+                    "type": "UINT64"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "success",
+                    "type": "BOOL"
+                }
+            ]
+        },
+        {
+            "name": "buyTickets",
+            "type": "Function",
+            "payable": true,
+            "onlyOwner": false,
+            "inputs": [
+                {
+                    "name": "count",
+                    "type": "UINT32"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "success",
+                    "type": "BOOL"
+                }
+            ]
+        },
+        {
+            "name": "drawWinner",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "success",
+                    "type": "BOOL"
+                }
+            ]
+        },
+        {
+            "name": "claimPrize",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "winnerAmount",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "withdrawFee",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": true,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "feeAmount",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "getRoundInfo",
+            "type": "View",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "ticketPrice",
+                    "type": "UINT256"
+                },
+                {
+                    "name": "endBlock",
+                    "type": "UINT64"
+                },
+                {
+                    "name": "totalTickets",
+                    "type": "UINT256"
+                },
+                {
+                    "name": "prizePool",
+                    "type": "UINT256"
+                },
+                {
+                    "name": "isDrawn",
+                    "type": "BOOL"
+                },
+                {
+                    "name": "prizeClaimed",
+                    "type": "BOOL"
+                },
+                {
+                    "name": "feeClaimed",
+                    "type": "BOOL"
+                },
+                {
+                    "name": "winner",
+                    "type": "ADDRESS"
+                },
+                {
+                    "name": "feePercent",
+                    "type": "UINT64"
+                },
+                {
+                    "name": "owner",
+                    "type": "ADDRESS"
+                }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "RoundCreated",
+            "values": [
+                {
+                    "name": "ticketPrice",
+                    "type": "UINT256"
+                },
+                {
+                    "name": "endBlock",
+                    "type": "UINT64"
+                }
+            ],
+            "type": "Event"
+        },
+        {
+            "name": "TicketBought",
+            "values": [
+                {
+                    "name": "buyer",
+                    "type": "ADDRESS"
+                },
+                {
+                    "name": "count",
+                    "type": "UINT32"
+                },
+                {
+                    "name": "cost",
+                    "type": "UINT256"
+                }
+            ],
+            "type": "Event"
+        },
+        {
+            "name": "WinnerDrawn",
+            "values": [
+                {
+                    "name": "winner",
+                    "type": "ADDRESS"
+                },
+                {
+                    "name": "totalPrize",
+                    "type": "UINT256"
+                }
+            ],
+            "type": "Event"
+        },
+        {
+            "name": "PrizeClaimed",
+            "values": [
+                {
+                    "name": "winner",
+                    "type": "ADDRESS"
+                },
+                {
+                    "name": "amountReceived",
+                    "type": "UINT256"
+                }
+            ],
+            "type": "Event"
+        },
+        {
+            "name": "FeeWithdrawn",
+            "values": [
+                {
+                    "name": "owner",
+                    "type": "ADDRESS"
+                },
+                {
+                    "name": "feeAmount",
+                    "type": "UINT256"
+                }
+            ],
+            "type": "Event"
+        }
+    ]
+}
