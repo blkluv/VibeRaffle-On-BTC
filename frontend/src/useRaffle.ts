@@ -25,6 +25,9 @@ export interface RoundInfo {
   winner:       string;
   feePercent:   bigint;
   owner:        string;
+  // ADDED: Missing properties for Hero component
+  roundNumber?: bigint | number;  // Optional round number
+  roundId?:     bigint | number;  // Optional round ID
 }
 
 // ── ABI ─────────────────────────────────────────────────────────────────────
@@ -57,6 +60,12 @@ const ABI: any[] = [
 const NETWORK = NETWORK_NAME === 'regtest' ? networks.regtest
               : NETWORK_NAME === 'mainnet' ? networks.bitcoin
               :                              networks.testnet;
+
+// Helper to generate a deterministic round number from endBlock
+function getRoundNumberFromEndBlock(endBlock: bigint): number {
+  // Use the last 6 digits of endBlock as a simple round number
+  return Number(endBlock % 1000000n);
+}
 
 // ── Hook ─────────────────────────────────────────────────────────────────────
 export function useRaffle() {
@@ -108,9 +117,14 @@ export function useRaffle() {
       const result = await (contract as any).getRoundInfo();
       if (result?.revert) throw new Error(result.revert);
       const p = result?.properties ?? {};
+      
+      // Generate round number from endBlock (since contract doesn't provide it)
+      const endBlock = p.endBlock ?? 0n;
+      const roundNumber = getRoundNumberFromEndBlock(endBlock);
+      
       setRound({
         ticketPrice:  p.ticketPrice  ?? 0n,
-        endBlock:     p.endBlock     ?? 0n,
+        endBlock:     endBlock,
         totalTickets: p.totalTickets ?? 0n,
         prizePool:    p.prizePool    ?? 0n,
         isDrawn:      p.isDrawn      ?? false,
@@ -119,6 +133,9 @@ export function useRaffle() {
         winner:       p.winner?.p2op?.(NETWORK) ?? p.winner?.toString?.()  ?? '',
         feePercent:   p.feePercent   ?? 5n,
         owner:        p.owner?.p2op?.(NETWORK)  ?? p.owner?.toString?.()   ?? '',
+        // ADDED: Provide roundNumber for Hero component
+        roundNumber:  roundNumber,
+        roundId:      roundNumber,  // Use same value as roundId fallback
       });
     } catch (e: any) {
       setError(e?.message ?? String(e));
