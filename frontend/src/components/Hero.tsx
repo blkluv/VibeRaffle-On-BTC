@@ -56,8 +56,13 @@ function TimerBox({ value, label }: { value: number; label: string }) {
 export default function Hero({ round, currentBlock }: Props) {
   const prizePool = round?.prizePool ?? 0n;
   const sats = Number(prizePool);
-  const { days, hours, minutes, seconds, ended } = useCountdown(round?.endBlock ?? 0n, currentBlock);
-  const roundNum = round?.roundNumber !== undefined ? Number(round.roundNumber) : 1;
+
+  const { days, hours, minutes, seconds, ended } = useCountdown(
+    round?.endBlock ?? 0n,
+    currentBlock
+  );
+
+  const roundNum = Number(round?.roundNumber ?? 1n);
 
   return (
     <section style={{
@@ -66,7 +71,6 @@ export default function Hero({ round, currentBlock }: Props) {
       maxWidth: 700,
       margin: '0 auto',
     }}>
-      {/* Badge */}
       <div style={{
         display: 'inline-flex', alignItems: 'center', gap: 8,
         background: 'rgba(124,58,237,0.1)',
@@ -79,7 +83,6 @@ export default function Hero({ round, currentBlock }: Props) {
         🎰 ROUND #{roundNum} · {round?.isDrawn ? 'COMPLETE' : round ? 'LIVE NOW' : 'LOADING...'}
       </div>
 
-      {/* Label */}
       <div style={{
         fontSize: 12, fontWeight: 600,
         color: '#64748b', letterSpacing: '0.15em',
@@ -88,7 +91,6 @@ export default function Hero({ round, currentBlock }: Props) {
         CURRENT PRIZE POOL
       </div>
 
-      {/* Prize number */}
       <div style={{
         fontSize: 80, fontWeight: 900, lineHeight: 1,
         color: '#10b981',
@@ -96,6 +98,7 @@ export default function Hero({ round, currentBlock }: Props) {
       }}>
         {sats > 0 ? sats.toLocaleString() : '0'}
       </div>
+
       <div style={{
         fontSize: 14, fontWeight: 600,
         color: '#10b981', opacity: 0.7,
@@ -105,7 +108,6 @@ export default function Hero({ round, currentBlock }: Props) {
         SATS
       </div>
 
-      {/* Countdown */}
       {round && !round.isDrawn && !ended && (
         <>
           <div style={{
@@ -115,12 +117,14 @@ export default function Hero({ round, currentBlock }: Props) {
           }}>
             ROUND ENDS IN
           </div>
+
           <div style={{ display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
             <TimerBox value={days} label="Days" />
             <TimerBox value={hours} label="Hours" />
             <TimerBox value={minutes} label="Mins" />
             <TimerBox value={seconds} label="Secs" />
           </div>
+
           <div style={{ marginTop: 20, fontSize: 12, color: '#475569', fontWeight: 500 }}>
             Block{' '}
             <span style={{ color: '#7c3aed', fontWeight: 700 }}>
@@ -134,7 +138,6 @@ export default function Hero({ round, currentBlock }: Props) {
         </>
       )}
 
-      {/* Round ended — ready to draw */}
       {round && !round.isDrawn && ended && round.totalTickets > 0n && (
         <div style={{
           marginTop: 24,
@@ -152,7 +155,6 @@ export default function Hero({ round, currentBlock }: Props) {
         </div>
       )}
 
-      {/* Winner selected */}
       {round?.isDrawn && (
         <div style={{
           marginTop: 24,
@@ -170,13 +172,17 @@ export default function Hero({ round, currentBlock }: Props) {
             color: '#94a3b8', fontSize: 11, fontFamily: 'monospace',
             wordBreak: 'break-all',
           }}>{round.winner}</p>
+
           {!round.prizeClaimed && (
             <p style={{ color: '#ec4899', fontSize: 12, marginTop: 8, fontWeight: 600 }}>
               Prize awaiting claim...
             </p>
           )}
+
           {round.prizeClaimed && round.feeClaimed && (
-            <p style={{ color: '#64748b', fontSize: 12, marginTop: 8 }}>Round complete ✓</p>
+            <p style={{ color: '#64748b', fontSize: 12, marginTop: 8 }}>
+              Round complete ✓
+            </p>
           )}
         </div>
       )}
