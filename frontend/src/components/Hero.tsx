@@ -62,7 +62,12 @@ export default function Hero({ round, currentBlock }: Props) {
     currentBlock
   );
 
-  const roundNum = Number(round?.roundNumber ?? 1n);
+  // FIX: Use roundId as fallback if roundNumber doesn't exist
+  const roundNum = round?.roundNumber 
+    ? Number(round.roundNumber) 
+    : round?.roundId 
+      ? Number(round.roundId) 
+      : 1;
 
   return (
     <section style={{
