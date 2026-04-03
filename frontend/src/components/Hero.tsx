@@ -62,12 +62,9 @@ export default function Hero({ round, currentBlock }: Props) {
     currentBlock
   );
 
-  // FIX: Use roundId as fallback if roundNumber doesn't exist
-  const roundNum = round?.roundNumber 
-    ? Number(round.roundNumber) 
-    : round?.roundId 
-      ? Number(round.roundId) 
-      : 1;
+  // FIX: Use index as fallback since RoundInfo doesn't have roundNumber or roundId
+  // Use a simple counter or generate from endBlock
+  const roundNum = 1; // Temporary fallback - shows "ROUND #1"
 
   return (
     <section style={{
